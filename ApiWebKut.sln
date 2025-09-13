@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiWebKut", "ApiWebKut.csproj", "{728EE8C3-C18D-4FA0-92AF-4A7A75C62177}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{728EE8C3-C18D-4FA0-92AF-4A7A75C62177}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{728EE8C3-C18D-4FA0-92AF-4A7A75C62177}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{728EE8C3-C18D-4FA0-92AF-4A7A75C62177}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{728EE8C3-C18D-4FA0-92AF-4A7A75C62177}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {39783F0C-FF3A-4212-A317-5B096A2B2330}
+	EndGlobalSection
+EndGlobal

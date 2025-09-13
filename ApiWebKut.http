@@ -1,0 +1,6 @@
+@ApiWebKut_HostAddress = http://localhost:5134
+
+GET {{ApiWebKut_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
