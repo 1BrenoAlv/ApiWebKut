@@ -10,8 +10,5 @@ namespace ApiWebKut.Data
 
 
         public DbSet<User> User { get; set; }  // CRIA A TABELA NO DB
-        public DbSet<Posts> Posts { get; set; }
-        public DbSet<TypeContent> TypeContet { get; set; }
-        public DbSet<Likes> Likes { get; set; }
     }
 }
