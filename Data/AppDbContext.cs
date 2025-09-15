@@ -9,7 +9,7 @@ namespace ApiWebKut.Data
         public AppDbContext(DbContextOptions options) : base(options) { } 
 
 
-        public DbSet<Users> Users { get; set; }  // CRIA A TABELA NO DB
+        public DbSet<User> User { get; set; }  // CRIA A TABELA NO DB
         public DbSet<Posts> Posts { get; set; }
         public DbSet<TypeContent> TypeContet { get; set; }
         public DbSet<Likes> Likes { get; set; }
