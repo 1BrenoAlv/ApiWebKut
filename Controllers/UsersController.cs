@@ -18,26 +18,26 @@ namespace ApiWebKut.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser(User user)
+        public async Task<IActionResult> AddUser(Users users)
         {
-            _appDbContext.User.Add(user);
+            _appDbContext.Users.Add(users);
 
             await _appDbContext.SaveChangesAsync();
 
-            return Ok(user);
+            return Ok(users);
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<Users>>> GetUsers()
         {
-            var users = await _appDbContext.User.ToListAsync();
+            var users = await _appDbContext.Users.ToListAsync();
 
 
             return Ok(users) ;
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<User>>> GetIdUser(Guid id)
+        public async Task<ActionResult<IEnumerable<Users>>> GetIdUser(Guid id)
         {
-            var user = await _appDbContext.User.FindAsync(id);
+            var user = await _appDbContext.Users.FindAsync(id);
 
             if(user == null)
             {
