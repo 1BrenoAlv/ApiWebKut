@@ -1,5 +1,8 @@
 ﻿using ApiWebKut.Data;
+using ApiWebKut.Data.Repository.Interface;
+using ApiWebKut.DTOs.Users;
 using ApiWebKut.Models;
+using ApiWebKut.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,49 +13,39 @@ namespace ApiWebKut.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _appDbContext;
-
-        public UsersController(AppDbContext appDbContext)
+        private readonly IUserService _userService;
+        public UsersController(IUserService userService)
         {
-            _appDbContext = appDbContext;
+            _userService = userService;
+        }
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+        {
+            var users = await _userService.GetAllUsersAsync();
+            return Ok(users); 
+        }
+        [HttpGet("{id:guid}")]
+
+        public async Task<ActionResult<UserDto>> GetUserById(Guid id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(); 
+            }
+
+            return Ok(user); 
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser(Users users)
+        public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto createUserDto)
         {
-            _appDbContext.Users.Add(users);
+            
 
-            await _appDbContext.SaveChangesAsync();
+            var newUser = await _userService.CreateUserAsync(createUserDto);
 
-            return Ok(users);
+            return CreatedAtAction(nameof(GetUserById), new { id = newUser.Id }, newUser);
         }
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Users>>> GetUsers()
-        {
-            var users = await _appDbContext.Users.ToListAsync();
-
-
-            return Ok(users) ;
-        }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Users>>> GetIdUser(Guid id)
-        {
-            var user = await _appDbContext.Users.FindAsync(id);
-
-            if(user == null)
-            {
-                return NotFound("Usuário não encontrado!");
-            }
-
-            return Ok(user) ;
-        }
-//        [HttpPatch("{id}")]
-//        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] User userUpdated)
-//        {
-//            var user = await _appDbContext.User.FindAsync(id);
-//t _appDbContext.SaveChangesAsync();
-
-//        }
-
     }
 }

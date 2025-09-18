@@ -1,0 +1,31 @@
+﻿using ApiWebKut.DTOs.TypeContent;
+using ApiWebKut.DTOs.Users;
+using System.ComponentModel.DataAnnotations;
+
+namespace ApiWebKut.DTOs.Posts
+{
+    public class PostDto
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public UserDto User { get; set; }
+        public TypeContentDto TypeContent { get; set; }
+    }
+
+    public class CreatePostDto
+    {
+        [Required]
+        public string Title { get; set; }
+        [Required]
+        public string Content { get; set; }
+        [Required]
+        public int TypeContentId { get; set; }
+    }
+
+    public class DeletedPostDto
+    {
+        public bool IsDeleted { get; set; } = false;
+    }
+}

@@ -16,7 +16,6 @@ namespace ApiWebKut.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) // Configura a chave primária composta para a entidade Likes
         {
-            
             modelBuilder.Entity<Likes>()
                 .HasKey(l => new { l.UserId, l.PostId });
 
