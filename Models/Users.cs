@@ -15,6 +15,8 @@ namespace ApiWebKut.Models
         public string Password { get; set; } 
         [Required]
         public string Username { get; set; }
+        public string? PasswordResetToken { get; set; }
+        public DateTime? ResetTokenExpires { get; set; }
 
 
         // Colecao de likes 

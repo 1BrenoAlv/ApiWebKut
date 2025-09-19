@@ -3,6 +3,7 @@ using ApiWebKut.Data.Repository.Interface;
 using ApiWebKut.DTOs.Users;
 using ApiWebKut.Models;
 using ApiWebKut.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace ApiWebKut.Controllers
             return CreatedAtAction(nameof(GetUserById), new { id = newUser.Id }, newUser);
         }
         [HttpDelete("{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             var result = await _userService.DeleteUserAsync(id);

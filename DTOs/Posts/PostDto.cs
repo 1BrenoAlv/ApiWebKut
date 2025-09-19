@@ -6,6 +6,13 @@ namespace ApiWebKut.DTOs.Posts
 {
     public class PostDto
     {
+        private object postToReturn;
+
+        public PostDto(object postToReturn)
+        {
+            this.postToReturn = postToReturn;
+        }
+
         public int Id { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
@@ -20,6 +27,18 @@ namespace ApiWebKut.DTOs.Posts
         public string Title { get; set; }
         [Required]
         public string Content { get; set; }
+        [Required]
+        public int TypeContentId { get; set; }
+    }
+
+    public class UpdatePostDto
+    {
+        [Required]
+        public string Title { get; set; }
+        [Required]
+        public string Content { get; set; }
+        [Required]
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         [Required]
         public int TypeContentId { get; set; }
     }
