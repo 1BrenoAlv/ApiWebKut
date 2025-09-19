@@ -36,6 +36,12 @@ namespace ApiWebKut.Data.Repository
             return await _appDbContext.Users.ToListAsync();
         }
 
+        public async Task<Users> GetUserByEmailAsync(string email)
+        {
+            var user = await _appDbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return user;
+        }
+
         public async Task<Users?> GetUsersAsync(Guid id)
         {
             return await _appDbContext.Users.FindAsync(id);

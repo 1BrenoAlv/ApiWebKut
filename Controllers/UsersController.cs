@@ -38,14 +38,36 @@ namespace ApiWebKut.Controllers
             return Ok(user); 
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto createUserDto)
         {
-            
-
             var newUser = await _userService.CreateUserAsync(createUserDto);
 
             return CreatedAtAction(nameof(GetUserById), new { id = newUser.Id }, newUser);
+        }
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            var result = await _userService.DeleteUserAsync(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserDto userDto)
+        {
+            if (id != userDto.Id)
+            {
+                return BadRequest("ID do usuário não corresponde.");
+            }
+            var updatedUser = await _userService.UpdateUserAsync(id, userDto);
+            if (updatedUser == null)
+            {
+                return NotFound();
+            }
+            return Ok(updatedUser);
         }
     }
 }

@@ -8,13 +8,13 @@ namespace ApiWebKut.Models
         [Key]
         public Guid Id { get; private set; } = Guid.NewGuid();
         [Required]
-        public string FullName { get; set; } = string.Empty;
+        public string FullName { get; set; } 
         [Required]
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; }
         [Required]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; set; } 
         [Required]
-        public string Username { get; set; } = string.Empty;
+        public string Username { get; set; }
 
 
         // Colecao de likes 

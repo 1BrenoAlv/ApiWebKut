@@ -2,20 +2,38 @@
 using ApiWebKut.DTOs.Users;
 using ApiWebKut.Models;
 using ApiWebKut.Services.Interfaces;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ApiWebKut.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository userRepository)
+        private readonly IConfiguration _configuration;
+        public UserService(IUserRepository userRepository, IConfiguration configuration)
         {
             _userRepository = userRepository;
+            _configuration = configuration;
         }
 
-        public Task<bool> ChangePasswordAsync(Guid id, ChangePasswordUserDto changePasswordUserDto)
+        public async Task<bool> ChangePasswordAsync(Guid id, ChangePasswordUserDto changePasswordUserDto)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.GetUsersAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+            if (!BCrypt.Net.BCrypt.Verify(changePasswordUserDto.OldPassword, user.Password))
+            {
+                return false;
+            }
+            var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordUserDto.NewPassword);
+            user.Password = newHashedPassword;
+            await _userRepository.UpdateUserAsync(id, user);
+            return true;
         }
 
         public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
@@ -24,19 +42,14 @@ namespace ApiWebKut.Services
             {
                 FullName = createUserDto.FullName,
                 Email = createUserDto.Email,
-                Username = createUserDto.Usernane,
-                Password = createUserDto.Password 
+                Username = createUserDto.Username,
+                Password = createUserDto.Password = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password)
             };
 
             var newUser = await _userRepository.AddUserAsync(userEntity);
 
-            return new UserDto
-            {
-                Id = newUser.Id,
-                FullName = newUser.FullName,
-                Email = newUser.Email,
-                Username = newUser.Username
-            };
+            return new UserDto(newUser);
+            
         }
 
         public async Task<bool> DeleteUserAsync(Guid id)
@@ -57,7 +70,7 @@ namespace ApiWebKut.Services
             });
         }
 
-        public  async Task<UserDto> GetUserByIdAsync(Guid id)
+        public async Task<UserDto> GetUserByIdAsync(Guid id)
         {
             var user = await _userRepository.GetUsersAsync(id);
             if (user == null)
@@ -76,7 +89,17 @@ namespace ApiWebKut.Services
 
         public Task<string> LoginAsync(LoginUserDto loginDto)
         {
-            throw new NotImplementedException();
+            var user = _userRepository.GetUserByEmailAsync(loginDto.Email);
+            if (user == null)
+            {
+                return null;
+            }
+            if (!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Result.Password))
+            {
+                return null;
+            }
+            var token = GenerateJwtToken(user.Result);
+            return Task.FromResult(token);
         }
 
         public async Task<UserDto?> UpdateUserAsync(Guid id, UserDto userDto)
@@ -84,7 +107,7 @@ namespace ApiWebKut.Services
             var existingUser = await _userRepository.GetUsersAsync(id);
             if (existingUser == null)
             {
-                return null; 
+                return null;
             }
 
             existingUser.FullName = userDto.FullName;
@@ -101,5 +124,27 @@ namespace ApiWebKut.Services
                 Username = updatedUser.Username
             };
         }
+        private string GenerateJwtToken(Users user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"]);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.Username)
+        }),
+                Expires = DateTime.UtcNow.AddHours(8),
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"],
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
+    }
 }
