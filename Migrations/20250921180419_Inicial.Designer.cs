@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiWebKut.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250919170833_Users")]
-    partial class Users
+    [Migration("20250921180419_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

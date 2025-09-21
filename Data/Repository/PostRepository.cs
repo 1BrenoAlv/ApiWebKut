@@ -19,25 +19,34 @@ namespace ApiWebKut.Data.Repository
         }
         public async Task<bool> DeletePostAsync(int id)
         {
-            var postDelete = await _appDbContext.Posts.FindAsync(id);
-            if (postDelete == null)
+            var postToDelete = await _appDbContext.Posts.FindAsync(id);
+
+            if (postToDelete == null)
             {
                 return false;
             }
-            _appDbContext.Posts.Remove(postDelete);
+            postToDelete.IsDeleted = true;
+            _appDbContext.Posts.Update(postToDelete);
             return await _appDbContext.SaveChangesAsync() > 0;
         }
         public async Task<List<Posts>> GetAllPostsAsync()
         {
-            return await _appDbContext.Posts.ToListAsync();
+            return await _appDbContext.Posts
+                .Where(p => !p.IsDeleted)
+                .Include(p => p.User)
+                .Include(p => p.TypeContent)
+                .ToListAsync();  // Ele busca apenas os posts que tem com o IsDeleted = false
         }
         public async Task<Posts?> GetPostByIdAsync(int id)
         {
-            return await _appDbContext.Posts.FindAsync(id);
+            return await _appDbContext.Posts
+                .Include(p => p.User)
+                .Include(p => p.TypeContent)
+                .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted); // Ele busca apenas os posts que tem com o IsDeleted = false
         }
         public async Task<Posts?> UpdatePostAsync(int id, Posts post)
         {
-            var existingPost = await _appDbContext.Posts.FindAsync(id);
+            var existingPost = await _appDbContext.Posts.FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
             if (existingPost == null)
             {
                 return null;
