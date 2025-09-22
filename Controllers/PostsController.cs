@@ -34,7 +34,7 @@ namespace ApiWebKut.Controllers
         }
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreatePost([FromBody] DTOs.Posts.CreatePostDto createPostDto)
+        public async Task<IActionResult> CreatePost([FromForm] DTOs.Posts.CreatePostDto createPostDto) // ele esta como fromForm para adicionar a imagem
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString))
@@ -48,7 +48,7 @@ namespace ApiWebKut.Controllers
 
         [HttpPut("{id:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdatePost(int id, [FromBody] DTOs.Posts.UpdatePostDto updatePostDto)
+        public async Task<IActionResult> UpdatePost(int id, [FromForm] DTOs.Posts.UpdatePostDto updatePostDto)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString))
