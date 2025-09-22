@@ -23,9 +23,9 @@ namespace ApiWebKut.DTOs.Posts
 
     public class CreatePostDto
     {
-        [Required]
+        [Required(ErrorMessage = "Digite o Titulo!")]
         public string Title { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Digite o conteúdo do post!")]
         public string Content { get; set; }
         [Required]
         public int TypeContentId { get; set; }
