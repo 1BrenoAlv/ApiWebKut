@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiWebKut.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250921180419_Inicial")]
+    [Migration("20250922150807_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -54,6 +54,9 @@ namespace ApiWebKut.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");

@@ -1,6 +1,8 @@
-﻿using ApiWebKut.DTOs.TypeContent;
+﻿using ApiWebKut.DTOs.Likes;
+using ApiWebKut.DTOs.TypeContent;
 using ApiWebKut.DTOs.Users;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace ApiWebKut.DTOs.Posts
 {
@@ -19,6 +21,8 @@ namespace ApiWebKut.DTOs.Posts
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public UserDto User { get; set; }
         public TypeContentDto TypeContent { get; set; }
+        public LikesDto LikesCount { get; set; }
+        public string? ImageUrl { get; set; }
     }
 
     public class CreatePostDto
@@ -29,6 +33,7 @@ namespace ApiWebKut.DTOs.Posts
         public string Content { get; set; }
         [Required]
         public int TypeContentId { get; set; }
+        public IFormFile ImageFile { get; set; }
     }
 
     public class UpdatePostDto
@@ -41,6 +46,7 @@ namespace ApiWebKut.DTOs.Posts
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         [Required]
         public int TypeContentId { get; set; }
+        public IFormFile? ImageFile { get; set; }
     }
 
     public class DeletedPostDto

@@ -32,7 +32,6 @@ namespace ApiWebKut.Controllers
             }
             return Ok(post);
         }
-
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> CreatePost([FromBody] DTOs.Posts.CreatePostDto createPostDto)

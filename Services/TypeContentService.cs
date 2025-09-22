@@ -15,11 +15,11 @@ namespace ApiWebKut.Services
         public async Task<List<TypeContentDto>> GetAllTypeContentsAsync()
         {
             var typeContents = await _typeContentRepository.GetAllTypeContentsAsync();
-            return typeContents.Select(tc => new TypeContentDto
+            return typeContents.Select(typeContent => new TypeContentDto
             {
-                Id = tc.Id,
-                Content = tc.Content,
-                Description = tc.Description
+                Id = typeContent.Id,
+                Content = typeContent.Content,
+                Description = typeContent.Description
             }).ToList();
         }
         public async Task<TypeContentDto?> GetTypeContentByIdAsync(int id)

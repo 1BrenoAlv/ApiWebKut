@@ -9,20 +9,32 @@ namespace ApiWebKut.Services
     public class PostService : IPostService
     {
         private readonly IPostRepository _postRepository;
-        public PostService(IPostRepository postRepository)
+        private readonly IFileService _fileService;
+        public PostService(IPostRepository postRepository, IFileService fileService)
         {
             _postRepository = postRepository;
+            _fileService = fileService;
         }
 
         public async Task<PostDto> CreatePostAsync(CreatePostDto createPostDto, Guid userId)
         {
+            string? imageUrl = null;
+            if (createPostDto.ImageFile != null)
+            {
+                imageUrl = await _fileService.SaveImageAsync(createPostDto.ImageFile);
+            }
+            else
+            {
+                createPostDto.ImageFile = null;
+            }
             var post = new Posts
             {
                 Title = createPostDto.Title,
                 Content = createPostDto.Content,
                 CreatedAt = DateTime.UtcNow,
                 UserId = userId,
-                TypeContentId = createPostDto.TypeContentId
+                TypeContentId = createPostDto.TypeContentId,
+                ImageUrl = imageUrl
             };
             var newPost = await _postRepository.AddPostAsync(post);
             var postToReturn = await _postRepository.GetPostByIdAsync(newPost.Id);

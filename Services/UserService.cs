@@ -22,22 +22,22 @@ namespace ApiWebKut.Services
             _tokenService = tokenService;
         }
 
-        //public async Task<bool> ChangePasswordAsync(Guid id, ChangePasswordUserDto changePasswordUserDto)
-        //{
-        //    var user = await _userRepository.GetUsersAsync(id);
-        //    if (user == null)
-        //    {
-        //        return false;
-        //    }
-        //    if (!BCrypt.Net.BCrypt.Verify(changePasswordUserDto.OldPassword, user.Password))
-        //    {
-        //        return false;
-        //    }
-        //    var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordUserDto.NewPassword);
-        //    user.Password = newHashedPassword;
-        //    await _userRepository.UpdateUserAsync(id, user);
-        //    return true;
-        //}
+        public async Task<bool> ChangePasswordAsync(Guid id, ChangePasswordUserDto changePasswordUserDto)
+        {
+            var user = await _userRepository.GetUsersAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+            if (!BCrypt.Net.BCrypt.Verify(changePasswordUserDto.OldPassword, user.Password))
+            {
+                return false;
+            }
+            var newHashedPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordUserDto.NewPassword);
+            user.Password = newHashedPassword;
+            await _userRepository.UpdateUserAsync(id, user);
+            return true;
+        }
 
         public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
         {

@@ -16,6 +16,7 @@ namespace ApiWebKut.Models
         public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
         [Required]
         public bool IsDeleted { get; set; } = false;
+        public string? ImageUrl { get; set; }
         public int TypeContentId { get; set; } 
         [ForeignKey("TypeContentId")]
         public virtual TypeContent TypeContent { get; set; } 
