@@ -25,31 +25,32 @@ namespace ApiWebKut.Services
             {
                 throw new Exception("Post não encontrado!");
             }
+
             var like = await _likeRepository.GetLikeAsync(userId, postId);
+            bool isLikedAfterToggle;
+
             if (like != null)
             {
+                // Se o like existia, nós o removemos.
                 await _likeRepository.RemoveLikeAsync(like);
+                isLikedAfterToggle = false;
             }
             else
             {
-                var newLike = new Likes
-                {
-                    UserId = userId,
-                    PostId = postId
-                };
+                var newLike = new Likes { UserId = userId, PostId = postId };
                 await _likeRepository.AddLikeAsync(newLike);
+                isLikedAfterToggle = true;
             }
-           await  _appDbContext.SaveChangesAsync();
+
+            await _appDbContext.SaveChangesAsync();
+
+
             var likeCount = await _likeRepository.GetLikeCountAsync(postId);
-            var userLiked = await _likeRepository.GetLikeAsync(userId,postId) != null;
             return new LikesDto
             {
-                IsLiked = userLiked,
+                IsLiked = isLikedAfterToggle,
                 LikeCount = likeCount,
             };
-
-
-
         }
     }
 }

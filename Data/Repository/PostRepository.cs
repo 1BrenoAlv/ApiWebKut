@@ -35,6 +35,7 @@ namespace ApiWebKut.Data.Repository
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.User)
                 .Include(p => p.TypeContent)
+                .Include(p => p.Likes)
                 .ToListAsync();  // Ele busca apenas os posts que tem com o IsDeleted = false
         }
         public async Task<Posts?> GetPostByIdAsync(int id)
@@ -42,6 +43,7 @@ namespace ApiWebKut.Data.Repository
             return await _appDbContext.Posts
                 .Include(p => p.User)
                 .Include(p => p.TypeContent)
+                .Include(p => p.Likes)
                 .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted); // Ele busca apenas os posts que tem com o IsDeleted = false
         }
         public async Task<Posts?> UpdatePostAsync(int id, Posts post)

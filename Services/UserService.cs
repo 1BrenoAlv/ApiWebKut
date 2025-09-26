@@ -51,8 +51,14 @@ namespace ApiWebKut.Services
 
             var newUser = await _userRepository.AddUserAsync(userEntity);
 
-            return new UserDto(newUser);
-            
+            return new UserDto
+            {
+                Id = newUser.Id,
+                FullName = newUser.FullName,
+                Email = newUser.Email,
+                Username = newUser.Username
+            };
+
         }
 
         public async Task<bool> DeleteUserAsync(Guid id)
@@ -65,7 +71,13 @@ namespace ApiWebKut.Services
         {
             var users = await _userRepository.GetAllAsync();
 
-            return users.Select(user => new UserDto(user));
+            return users.Select(user => new UserDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                Username = user.Username
+            });
         }
 
         public async Task<UserDto> GetUserByIdAsync(Guid id)
@@ -76,7 +88,13 @@ namespace ApiWebKut.Services
                 return null;
             }
 
-            return new UserDto(user);
+            return new UserDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                Username = user.Username
+            };
         }
 
         public async Task<string> LoginAsync(LoginUserDto loginDto)
@@ -108,7 +126,13 @@ namespace ApiWebKut.Services
 
             var updatedUser = await _userRepository.UpdateUserAsync(id, existingUser);
 
-            return new UserDto(updatedUser);
+            return new UserDto
+            {
+                Id = updatedUser.Id,
+                FullName = updatedUser.FullName,
+                Email = updatedUser.Email,
+                Username = updatedUser.Username
+            };
         }
         
     }

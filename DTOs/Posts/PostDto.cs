@@ -8,20 +8,14 @@ namespace ApiWebKut.DTOs.Posts
 {
     public class PostDto
     {
-        private object postToReturn;
-
-        public PostDto(object postToReturn)
-        {
-            this.postToReturn = postToReturn;
-        }
-
         public int Id { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public UserDto User { get; set; }
         public TypeContentDto TypeContent { get; set; }
-        public LikesDto LikesCount { get; set; }
+        public int LikesCount { get; set; }
+        public bool UserHasLiked { get; set; }
         public string? ImageUrl { get; set; }
     }
 

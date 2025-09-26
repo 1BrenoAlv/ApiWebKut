@@ -4,12 +4,12 @@ namespace ApiWebKut.DTOs.Users
 {
     public class UserDto
     {
-        private Models.Users newUser;
+        //private Models.Users newUser;
 
-        public UserDto(Models.Users newUser) // contrutor que recebe um objeto do tipo Users para inicializar o DTO
-        {
-            this.newUser = newUser;
-        }
+        //public UserDto(Models.Users newUser) 
+        //{
+        //    this.newUser = newUser;
+        //}
 
         public Guid Id { get; init; }
         public string FullName { get; set; }

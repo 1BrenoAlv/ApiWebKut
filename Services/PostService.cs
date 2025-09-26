@@ -1,8 +1,12 @@
 ﻿using ApiWebKut.Data.Repository.Interface;
+using ApiWebKut.DTOs.Likes;
 using ApiWebKut.DTOs.Posts;
-using ApiWebKut.Services.Interfaces;
+using ApiWebKut.DTOs.Users;
 using ApiWebKut.Models;
+using ApiWebKut.Services.Interfaces;
+using Microsoft.Extensions.Hosting;
 using System.Security.Authentication;
+using System.Security.Claims;
 
 namespace ApiWebKut.Services
 {
@@ -10,10 +14,12 @@ namespace ApiWebKut.Services
     {
         private readonly IPostRepository _postRepository;
         private readonly IFileService _fileService;
-        public PostService(IPostRepository postRepository, IFileService fileService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public PostService(IPostRepository postRepository, IFileService fileService, IHttpContextAccessor httpContextAccessor)
         {
             _postRepository = postRepository;
             _fileService = fileService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<PostDto> CreatePostAsync(CreatePostDto createPostDto, Guid userId)
@@ -38,7 +44,26 @@ namespace ApiWebKut.Services
             };
             var newPost = await _postRepository.AddPostAsync(post);
             var postToReturn = await _postRepository.GetPostByIdAsync(newPost.Id);
-            return new PostDto(postToReturn);
+            return new PostDto
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Content = post.Content,
+                CreatedAt = post.CreatedAt,
+                ImageUrl = post.ImageUrl,
+                User = new UserDto
+                {
+                    Id = post.User.Id,
+                    Username = post.User.Username,
+                    Email = post.User.Email,
+                    FullName = post.User.FullName
+                },
+                TypeContent = new DTOs.TypeContent.TypeContentDto
+                {
+                    Id = post.TypeContent.Id,
+                    Content = post.TypeContent.Content
+                }
+            };
         }
 
         public async Task<bool> DeletePostAsync(int id, Guid userId)
@@ -55,20 +80,69 @@ namespace ApiWebKut.Services
             return await _postRepository.DeletePostAsync(id);
         }
 
-        public Task<IEnumerable<PostDto>> GetAllPostsAsync()
+        public async Task<IEnumerable<PostDto>> GetAllPostsAsync()
         {
-            var posts = _postRepository.GetAllPostsAsync();
-            return Task.FromResult(posts.Result.Select(p => new PostDto(p)));
+            var userIdString = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Guid.TryParse(userIdString, out Guid userId);
+            var posts = await _postRepository.GetAllPostsAsync();
+            var postDtos = posts.Select(p => new PostDto
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Content = p.Content,
+                CreatedAt = p.CreatedAt,
+                ImageUrl = p.ImageUrl,
+                User = new UserDto
+                {
+                    Id = p.User.Id,
+                    Username = p.User.Username,
+                    Email = p.User.Email,
+                },
+                TypeContent = new DTOs.TypeContent.TypeContentDto
+                {
+                    Id = p.TypeContent.Id,
+                    Content = p.TypeContent.Content,
+                },
+                LikesCount = p.Likes?.Count ?? 0,
+
+                UserHasLiked = userId != Guid.Empty && (p.Likes?.Any(like => like.UserId == userId) ?? false)
+            });
+            
+            return postDtos;
         }
 
         public async Task<PostDto> GetPostByIdAsync(int id)
         {
+            var userIdString = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Guid.TryParse(userIdString, out Guid currentUserId);
             var post = await _postRepository.GetPostByIdAsync(id);
             if (post == null)
             {
                 return null;
             }
-            return new PostDto(post);
+
+            return new PostDto
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Content = post.Content,
+                CreatedAt = post.CreatedAt,
+                ImageUrl = post.ImageUrl,
+                User = new UserDto
+                {
+                    Id = post.User.Id,
+                    Username = post.User.Username,
+                    Email = post.User.Email,
+                    FullName = post.User.FullName
+                },
+                TypeContent = new DTOs.TypeContent.TypeContentDto
+                {
+                    Id = post.TypeContent.Id,
+                    Content = post.TypeContent.Content
+                },
+                LikesCount = post.Likes?.Count() ?? 0,
+                UserHasLiked = currentUserId != Guid.Empty && (post.Likes?.Any(like => like.UserId == currentUserId) ?? false)
+            };
         }
 
         public async Task<PostDto> UpdatePostAsync(int id, UpdatePostDto updatePostDto, Guid userId)
@@ -86,7 +160,26 @@ namespace ApiWebKut.Services
             post.Content = updatePostDto.Content;
             post.TypeContentId = updatePostDto.TypeContentId;
             var updatedPost = await _postRepository.UpdatePostAsync(id, post);
-            return new PostDto(updatedPost);
+            return new PostDto
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Content = post.Content,
+                CreatedAt = post.CreatedAt,
+                ImageUrl = post.ImageUrl,
+                User = new UserDto
+                {
+                    Id = post.User.Id,
+                    Username = post.User.Username,
+                    Email = post.User.Email,
+                    FullName = post.User.FullName
+                },
+                TypeContent = new DTOs.TypeContent.TypeContentDto
+                {
+                    Id = post.TypeContent.Id,
+                    Content = post.TypeContent.Content
+                }
+            };
         }
     }
 }

@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:5173")
+                          policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
                       });
@@ -27,6 +27,7 @@ var configuration = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPostService, PostService>();
@@ -97,8 +98,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+else 
+{ 
 app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCors(MyAllowSpecificOrigins);
