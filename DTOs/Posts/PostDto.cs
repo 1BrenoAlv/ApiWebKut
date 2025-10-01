@@ -12,6 +12,8 @@ namespace ApiWebKut.DTOs.Posts
         public string Title { get; set; }
         public string Content { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public UserDto User { get; set; }
         public TypeContentDto TypeContent { get; set; }
         public int LikesCount { get; set; }
@@ -25,7 +27,6 @@ namespace ApiWebKut.DTOs.Posts
         public string Title { get; set; }
         [Required(ErrorMessage = "Digite o conteúdo do post!")]
         public string Content { get; set; }
-        [Required]
         public int TypeContentId { get; set; }
         public IFormFile ImageFile { get; set; }
     }
@@ -36,7 +37,6 @@ namespace ApiWebKut.DTOs.Posts
         public string Title { get; set; }
         [Required]
         public string Content { get; set; }
-        [Required]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         [Required]
         public int TypeContentId { get; set; }

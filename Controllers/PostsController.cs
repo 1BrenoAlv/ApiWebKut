@@ -22,7 +22,7 @@ namespace ApiWebKut.Controllers
             return Ok(posts);
         }
 
-        [HttpGet("{id:int}")] 
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetPostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
@@ -82,6 +82,20 @@ namespace ApiWebKut.Controllers
                 return NotFound(new { message = "Post não encontrado ou você não tem permissão para excluí-lo." });
             }
             return NoContent();
+        }
+    
+    [HttpGet("MyPosts")]
+        [Authorize]
+        public async Task<IActionResult> GetMyPosts()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized(new { message = "Usuário não autenticado ou token inválido." });
+            }
+            var userId = Guid.Parse(userIdString);
+            var posts = await _postService.GetPostsByUserIdAsync(userId);
+            return Ok(posts);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ApiWebKut.Data.Repository.Interface;
 using ApiWebKut.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace ApiWebKut.Data.Repository
 {
@@ -45,6 +46,15 @@ namespace ApiWebKut.Data.Repository
                 .Include(p => p.TypeContent)
                 .Include(p => p.Likes)
                 .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted); // Ele busca apenas os posts que tem com o IsDeleted = false
+        }
+        public async Task<IEnumerable<Posts>> GetPostsByUserIdAsync(Guid userId)
+        {
+            return await _appDbContext.Posts
+                .Where(p => p.UserId == userId && !p.IsDeleted)
+                .Include(p => p.User)
+                .Include(p => p.TypeContent)
+                .Include(p => p.Likes)
+                .ToListAsync();
         }
         public async Task<Posts?> UpdatePostAsync(int id, Posts post)
         {

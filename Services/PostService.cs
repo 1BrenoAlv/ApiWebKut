@@ -69,15 +69,31 @@ namespace ApiWebKut.Services
         public async Task<bool> DeletePostAsync(int id, Guid userId)
         {
             var post = await _postRepository.GetPostByIdAsync(id);
+
             if (post == null)
             {
                 return false;
             }
             if (post.UserId != userId)
             {
-                throw new AuthenticationException("Você não tem permissão para deletar esse post!");
+                throw new AuthenticationException("Você não tem permissão para deletar este post!");
             }
-            return await _postRepository.DeletePostAsync(id);
+
+            var imageUrlToDelete = post.ImageUrl;
+
+            var success = await _postRepository.DeletePostAsync(id);
+
+            if (success && !string.IsNullOrEmpty(imageUrlToDelete))
+            {
+                var imagePath = Path.Combine("wwwroot", imageUrlToDelete.TrimStart('/'));
+
+                if (File.Exists(imagePath))
+                {
+                    File.Delete(imagePath);
+                }
+            }
+
+            return success;
         }
 
         public async Task<IEnumerable<PostDto>> GetAllPostsAsync()
@@ -91,6 +107,7 @@ namespace ApiWebKut.Services
                 Title = p.Title,
                 Content = p.Content,
                 CreatedAt = p.CreatedAt,
+                UpdatedAt = p.UpdatedAt ?? p.CreatedAt,
                 ImageUrl = p.ImageUrl,
                 User = new UserDto
                 {
@@ -114,9 +131,12 @@ namespace ApiWebKut.Services
         public async Task<PostDto> GetPostByIdAsync(int id)
         {
             var userIdString = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Guid.TryParse(userIdString, out Guid currentUserId);
+            if (!Guid.TryParse(userIdString, out Guid currentUserId))
+            {
+                return null;
+            }
             var post = await _postRepository.GetPostByIdAsync(id);
-            if (post == null)
+            if (post == null || post.UserId != currentUserId)
             {
                 return null;
             }
@@ -127,6 +147,7 @@ namespace ApiWebKut.Services
                 Title = post.Title,
                 Content = post.Content,
                 CreatedAt = post.CreatedAt,
+                UpdatedAt = post.UpdatedAt ?? post.CreatedAt,
                 ImageUrl = post.ImageUrl,
                 User = new UserDto
                 {
@@ -141,11 +162,36 @@ namespace ApiWebKut.Services
                     Content = post.TypeContent.Content
                 },
                 LikesCount = post.Likes?.Count() ?? 0,
-                UserHasLiked = currentUserId != Guid.Empty && (post.Likes?.Any(like => like.UserId == currentUserId) ?? false)
+                UserHasLiked = post.Likes?.Any(like => like.UserId == currentUserId) ?? false
             };
         }
+        public async Task<IEnumerable<PostDto>> GetPostsByUserIdAsync(Guid userId)
+        {
+            var posts = await _postRepository.GetPostsByUserIdAsync(userId);
+            return posts.Select(p => new PostDto
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Content = p.Content,
+                CreatedAt = p.CreatedAt,
+                UpdatedAt = p.UpdatedAt ?? p.CreatedAt,
+                ImageUrl = p.ImageUrl,
+                User = new UserDto
+                {
+                    Id = p.User.Id,
+                    Username = p.User.Username,
+                    Email = p.User.Email,
+                },
+                TypeContent = new DTOs.TypeContent.TypeContentDto
+                {
+                    Id = p.TypeContent.Id,
+                    Content = p.TypeContent.Content,
+                },
+                LikesCount = p.Likes?.Count ?? 0
+            });
+        }
 
-        public async Task<PostDto> UpdatePostAsync(int id, UpdatePostDto updatePostDto, Guid userId)
+        public async Task<PostDto> UpdatePostAsync(int id, UpdatePostDto updatePostDto, Guid userId) // ESSE CODIGO FOI ALTERADO, REVISE
         {
             var post = await _postRepository.GetPostByIdAsync(id);
             if (post == null)
@@ -156,28 +202,50 @@ namespace ApiWebKut.Services
             {
                 throw new AuthenticationException("Você não tem permissão para editar esse post!");
             }
+
+            if(updatePostDto.ImageFile != null && updatePostDto.ImageFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine("wwwroot", "uploads");
+
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + updatePostDto.ImageFile.FileName;
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await updatePostDto.ImageFile.CopyToAsync(stream);
+                }
+                post.ImageUrl = "/uploads" + uniqueFileName;
+            }
+
             post.Title = updatePostDto.Title;
             post.Content = updatePostDto.Content;
             post.TypeContentId = updatePostDto.TypeContentId;
+
+            await _postRepository.UpdatePostAsync(id, post);
             var updatedPost = await _postRepository.UpdatePostAsync(id, post);
             return new PostDto
             {
-                Id = post.Id,
-                Title = post.Title,
-                Content = post.Content,
-                CreatedAt = post.CreatedAt,
-                ImageUrl = post.ImageUrl,
+                Id = updatedPost.Id,
+                Title = updatedPost.Title,
+                Content = updatedPost.Content,
+                CreatedAt = updatedPost.CreatedAt,
+                ImageUrl = updatedPost.ImageUrl,
                 User = new UserDto
                 {
-                    Id = post.User.Id,
-                    Username = post.User.Username,
-                    Email = post.User.Email,
-                    FullName = post.User.FullName
+                    Id = updatedPost.User.Id,
+                    Username = updatedPost.User.Username,
+                    Email = updatedPost.User.Email,
+                    FullName = updatedPost.User.FullName
                 },
                 TypeContent = new DTOs.TypeContent.TypeContentDto
                 {
-                    Id = post.TypeContent.Id,
-                    Content = post.TypeContent.Content
+                    Id = updatedPost.TypeContent.Id,
+                    Content = updatedPost.TypeContent.Content
                 }
             };
         }

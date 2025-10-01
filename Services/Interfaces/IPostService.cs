@@ -6,6 +6,7 @@ namespace ApiWebKut.Services.Interfaces
     {
         Task<IEnumerable<PostDto>> GetAllPostsAsync();
         Task<PostDto?> GetPostByIdAsync(int id);
+        Task<IEnumerable<PostDto>> GetPostsByUserIdAsync(Guid userId);
         Task<PostDto> CreatePostAsync(CreatePostDto createPostDto, Guid userId);
         Task<PostDto?> UpdatePostAsync(int id, UpdatePostDto updatePostDto, Guid userId);
         Task<bool> DeletePostAsync(int id, Guid userId);
