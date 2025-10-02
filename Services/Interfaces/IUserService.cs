@@ -7,7 +7,7 @@ namespace ApiWebKut.Services.Interfaces
         Task<IEnumerable<UserDto>> GetAllUsersAsync();
         Task<UserDto?> GetUserByIdAsync(Guid id);
         Task<UserDto> CreateUserAsync(CreateUserDto createUserDto);
-        Task<UserDto?> UpdateUserAsync(Guid id, UserDto userDto);
+        Task<UserDto?> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto);
         Task<bool> DeleteUserAsync(Guid id);
         Task<bool> ChangePasswordAsync(Guid id, ChangePasswordUserDto changePasswordUserDto);
         Task<string> LoginAsync(LoginUserDto loginDto);

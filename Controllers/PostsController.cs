@@ -48,7 +48,7 @@ namespace ApiWebKut.Controllers
 
         [HttpPut("{id:int}")]
         [Authorize]
-        public async Task<IActionResult> UpdatePost(int id, [FromForm] DTOs.Posts.UpdatePostDto updatePostDto)
+        public async Task<IActionResult> UpdatePost(int id, [FromBody] DTOs.Posts.UpdatePostDto updatePostDto)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString))

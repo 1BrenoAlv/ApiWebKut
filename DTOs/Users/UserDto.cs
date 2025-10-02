@@ -4,12 +4,6 @@ namespace ApiWebKut.DTOs.Users
 {
     public class UserDto
     {
-        //private Models.Users newUser;
-
-        //public UserDto(Models.Users newUser) 
-        //{
-        //    this.newUser = newUser;
-        //}
 
         public Guid Id { get; init; }
         public string FullName { get; set; }
@@ -42,6 +36,19 @@ namespace ApiWebKut.DTOs.Users
         [Required(ErrorMessage = "Digite o seu nome de usuário!")]
         [StringLength(15)]
         public string Username { get; set; }
+    }
+
+    public class UpdateUserDto
+    {
+        [Required(ErrorMessage = "Nome completo é obrigatório!")]
+        [StringLength(150)]
+        public string FullName { get; set; }
+        [Required(ErrorMessage = "Nome de usuário é obrigatório!")]
+        [StringLength(15)]
+        public string Username { get; set; }
+        [Required(ErrorMessage = "E-mail é obrigatório!")]
+        [EmailAddress]
+        public string Email { get; set; }
     }
 
     public class ChangePasswordUserDto

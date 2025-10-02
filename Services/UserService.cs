@@ -112,28 +112,33 @@ namespace ApiWebKut.Services
             return token;
         }
 
-        public async Task<UserDto?> UpdateUserAsync(Guid id, UserDto userDto)
+        public async Task<UserDto?> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
         {
-            var existingUser = await _userRepository.GetUsersAsync(id);
-            if (existingUser == null)
+            var user = await _userRepository.GetUsersAsync(id);
+            if (user == null)
             {
                 return null;
             }
+            var existingUserEmail = await _userRepository.GetUserByEmailAsync(updateUserDto.Email);
+            if(existingUserEmail != null && existingUserEmail.Id != id)
+            {
+                throw new Exception("E-mail já está em uso por outro usuário.");
+            }
+            user.FullName = updateUserDto.FullName;
+            user.Username = updateUserDto.Username;
+            user.Email = updateUserDto.Email;
 
-            existingUser.FullName = userDto.FullName;
-            existingUser.Email = userDto.Email;
-            existingUser.Username = userDto.Username;
-
-            var updatedUser = await _userRepository.UpdateUserAsync(id, existingUser);
+            var updatedUser = await _userRepository.UpdateUserAsync(id, user);
 
             return new UserDto
             {
-                Id = updatedUser.Id,
+                Id = updatedUser.Id, 
                 FullName = updatedUser.FullName,
-                Email = updatedUser.Email,
-                Username = updatedUser.Username
+                Username = updatedUser.Username,
+                Email = updatedUser.Email
             };
+
         }
-        
+
     }
 }

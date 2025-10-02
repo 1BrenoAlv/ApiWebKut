@@ -40,7 +40,6 @@ namespace ApiWebKut.DTOs.Posts
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         [Required]
         public int TypeContentId { get; set; }
-        public IFormFile? ImageFile { get; set; }
     }
 
     public class DeletedPostDto

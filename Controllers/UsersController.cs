@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ApiWebKut.Controllers
 {
@@ -58,18 +59,27 @@ namespace ApiWebKut.Controllers
             return NoContent();
         }
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserDto userDto)
+        [Authorize]
+        public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody]UpdateUserDto updateUserDto)
         {
-            if (id != userDto.Id)
+            var userIdToken = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            if(id !=  userIdToken)
             {
-                return BadRequest("ID do usuário não corresponde.");
+                return Forbid("Você não tem permissão para editar este perfil.");
             }
-            var updatedUser = await _userService.UpdateUserAsync(id, userDto);
-            if (updatedUser == null)
+            try
             {
-                return NotFound();
+                var updatedUser = await _userService.UpdateUserAsync(id, updateUserDto);
+                if (updatedUser == null)
+                {
+                    return NotFound("Usuário não encontrado.");
+                }
+                return Ok(updatedUser);
+            }catch(Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
-            return Ok(updatedUser);
         }
     }
 }

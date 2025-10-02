@@ -191,7 +191,7 @@ namespace ApiWebKut.Services
             });
         }
 
-        public async Task<PostDto> UpdatePostAsync(int id, UpdatePostDto updatePostDto, Guid userId) // ESSE CODIGO FOI ALTERADO, REVISE
+        public async Task<PostDto> UpdatePostAsync(int id, UpdatePostDto updatePostDto, Guid userId) 
         {
             var post = await _postRepository.GetPostByIdAsync(id);
             if (post == null)
@@ -202,26 +202,7 @@ namespace ApiWebKut.Services
             {
                 throw new AuthenticationException("Você não tem permissão para editar esse post!");
             }
-
-            if(updatePostDto.ImageFile != null && updatePostDto.ImageFile.Length > 0)
-            {
-                var uploadsFolder = Path.Combine("wwwroot", "uploads");
-
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                var uniqueFileName = Guid.NewGuid().ToString() + "_" + updatePostDto.ImageFile.FileName;
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await updatePostDto.ImageFile.CopyToAsync(stream);
-                }
-                post.ImageUrl = "/uploads" + uniqueFileName;
-            }
-
+            
             post.Title = updatePostDto.Title;
             post.Content = updatePostDto.Content;
             post.TypeContentId = updatePostDto.TypeContentId;

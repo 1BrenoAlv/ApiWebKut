@@ -25,7 +25,8 @@ namespace ApiWebKut.Services
                 {
                     new Claim(ClaimTypes.NameIdentifier, users.Id.ToString()),
                     new Claim(ClaimTypes.Email, users.Email),
-                    new Claim(ClaimTypes.Name, users.Username)
+                    new Claim(ClaimTypes.Name, users.Username),
+                    new Claim(ClaimTypes.GivenName, users.FullName)
         }),
                 Expires = DateTime.UtcNow.AddHours(8),
                 Issuer = _configuration["Jwt:Issuer"],
