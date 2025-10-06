@@ -4,7 +4,7 @@ Bem-vindo ao repositório do backend do **WebKut**, uma API RESTful robusta e se
 
 ## 📜 Sobre o Projeto
 
-A WebKut API foi desenvolvida para ser a fonte de dados central para qualquer cliente, incluindo o frontend em Vue.js. Ela expõe uma série de endpoints para manipulação de recursos como usuários, posts, likes e outros, seguindo as melhores práticas de desenvolvimento de APIs, como o padrão de repositório e injeção de dependência.
+A WebKut API foi desenvolvida para ser a fonte de dados central para qualquer cliente, incluindo o  [front end](https://github.com/1BrenoAlv/Web-Kut-FrontEnd) em Vue.js. Ela expõe uma série de endpoints para manipulação de recursos como usuários, posts, likes e outros, seguindo as melhores práticas de desenvolvimento de APIs, como o padrão de repositório e injeção de dependência.
 
 -----
 
