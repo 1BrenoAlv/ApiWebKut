@@ -15,7 +15,7 @@ namespace ApiWebKut.Services
         private readonly IPostRepository _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
         private readonly IFileService _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-      
+
 
         public async Task<PostDto> CreatePostAsync(CreatePostDto createPostDto, Guid userId)
         {
@@ -202,7 +202,6 @@ namespace ApiWebKut.Services
             post.Content = updatePostDto.Content;
             post.TypeContentId = updatePostDto.TypeContentId;
 
-            await _postRepository.UpdatePostAsync(id, post);
             var updatedPost = await _postRepository.UpdatePostAsync(id, post);
             return new PostDto
             {
