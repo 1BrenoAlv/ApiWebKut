@@ -56,15 +56,18 @@ namespace ApiWebKut.Data.Repository
         public async Task<Posts?> UpdatePostAsync(int id, Posts post)
         {
             var existingPost = await _appDbContext.Posts.FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
+
             if (existingPost == null)
             {
                 return null;
             }
+
             existingPost.Title = post.Title;
             existingPost.Content = post.Content;
             existingPost.TypeContentId = post.TypeContentId;
+
             await _appDbContext.SaveChangesAsync();
-            return existingPost;
+            return await GetPostByIdAsync(id);
         }
     }
 }

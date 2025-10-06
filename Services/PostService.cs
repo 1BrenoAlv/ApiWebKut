@@ -204,6 +204,8 @@ namespace ApiWebKut.Services
 
             var updatedPost = await _postRepository.UpdatePostAsync(id, post);
             return new PostDto
+
+
             {
                 Id = updatedPost.Id,
                 Title = updatedPost.Title,
