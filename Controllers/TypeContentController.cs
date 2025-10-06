@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ApiWebKut.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiWebKut.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TypeContentController : ControllerBase
+    public class TypeContentController(ITypeContentService typeContentService) : ControllerBase
     {
-        private readonly Services.Interfaces.ITypeContentService _typeContentService;
-        public TypeContentController(Services.Interfaces.ITypeContentService typeContentService)
-        {
-            _typeContentService = typeContentService;
-        }
+        private readonly ITypeContentService _typeContentService = typeContentService ?? throw new ArgumentNullException(nameof(typeContentService));
+
         [HttpGet]
         public async Task<IActionResult> GetAllTypeContents()
         {

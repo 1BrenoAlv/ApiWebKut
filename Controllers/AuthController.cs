@@ -8,13 +8,10 @@ namespace ApiWebKut.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(IUserService userService) : ControllerBase
     {
-        private readonly IUserService _userService;
-        public AuthController(IUserService userService)
-        {
-            _userService = userService;
-        }
+        private readonly IUserService _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+       
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login([FromBody] LoginUserDto loginUserDto)
         {

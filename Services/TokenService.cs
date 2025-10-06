@@ -7,13 +7,9 @@ using System.Text;
 
 namespace ApiWebKut.Services
 {
-    public class TokenService : ITokenService
+    public class TokenService(IConfiguration configuration) : ITokenService
     {
-        private readonly IConfiguration _configuration;
-        public TokenService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        private readonly IConfiguration _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         public string GenerateJwtToken(Users users)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

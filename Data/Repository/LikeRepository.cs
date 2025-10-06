@@ -5,13 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApiWebKut.Data.Repository
 {
-    public class LikeRepository : ILikeRepository
+    public class LikeRepository(AppDbContext appDbContext) : ILikeRepository
     {
-        private readonly AppDbContext _appDbContext;
-        public LikeRepository(AppDbContext appDbContext)
-        {
-            _appDbContext = appDbContext;
-        }
+        private readonly AppDbContext _appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
 
         public async Task AddLikeAsync(Likes like)
         {

@@ -5,13 +5,10 @@ using Microsoft.Extensions.Hosting;
 
 namespace ApiWebKut.Data.Repository
 {
-    public class PostRepository : IPostRepository
+    public class PostRepository(AppDbContext appDbContext) : IPostRepository
     {
-        private readonly AppDbContext _appDbContext;
-        public PostRepository(AppDbContext appDbContext)
-        {
-            _appDbContext = appDbContext;
-        }
+        private readonly AppDbContext _appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
+
         public async Task<Posts> AddPostAsync(Posts post)
         {
             await _appDbContext.Posts.AddAsync(post);

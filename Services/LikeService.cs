@@ -6,17 +6,11 @@ using ApiWebKut.Services.Interfaces;
 
 namespace ApiWebKut.Services
 {
-    public class LikeService : ILikeService
+    public class LikeService(ILikeRepository likeRepository, IPostRepository postRepository, AppDbContext appDbContext) : ILikeService
     {
-        private readonly ILikeRepository _likeRepository;
-        private readonly IPostRepository _postRepository;
-        private readonly AppDbContext _appDbContext;
-        public LikeService(ILikeRepository likeRepository, IPostRepository postRepository, AppDbContext appDbContext)
-        {
-            _likeRepository = likeRepository;
-            _postRepository = postRepository;
-            _appDbContext = appDbContext;
-        }
+        private readonly ILikeRepository _likeRepository = likeRepository ?? throw new ArgumentNullException(nameof(likeRepository));
+        private readonly IPostRepository _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+        private readonly AppDbContext _appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
 
         public async Task<LikesDto> ToggleLikeAsync(Guid userId, int postId)
         {

@@ -4,13 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApiWebKut.Data.Repository
 {
-    public class TypeContentRepository : ITypeContentRepository
+    public class TypeContentRepository(AppDbContext appDbContext) : ITypeContentRepository
     {
-        private readonly AppDbContext _appDbContext;
-        public TypeContentRepository(AppDbContext appDbContext)
-        {
-            _appDbContext = appDbContext;
-        }
+        private readonly AppDbContext _appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
 
         public async Task<TypeContent> AddTypeContentAsync(TypeContent typeContent)
         {

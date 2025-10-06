@@ -7,13 +7,10 @@ namespace ApiWebKut.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LikeController : ControllerBase
+    public class LikeController(ILikeService likeService) : ControllerBase
     {
-        private readonly ILikeService _likeService;
-        public LikeController(ILikeService likeService)
-        {
-            _likeService = likeService;
-        }
+        private readonly ILikeService _likeService = likeService ?? throw new ArgumentNullException(nameof(likeService));
+        
         [Authorize]
         [HttpPost("{postId:int}")]
         public async Task<IActionResult> ToggleLike(int postId)

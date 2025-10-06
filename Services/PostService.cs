@@ -10,17 +10,12 @@ using System.Security.Claims;
 
 namespace ApiWebKut.Services
 {
-    public class PostService : IPostService
+    public class PostService(IPostRepository postRepository, IFileService fileService, IHttpContextAccessor httpContextAccessor) : IPostService
     {
-        private readonly IPostRepository _postRepository;
-        private readonly IFileService _fileService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public PostService(IPostRepository postRepository, IFileService fileService, IHttpContextAccessor httpContextAccessor)
-        {
-            _postRepository = postRepository;
-            _fileService = fileService;
-            _httpContextAccessor = httpContextAccessor;
-        }
+        private readonly IPostRepository _postRepository = postRepository ?? throw new ArgumentNullException(nameof(postRepository));
+        private readonly IFileService _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+      
 
         public async Task<PostDto> CreatePostAsync(CreatePostDto createPostDto, Guid userId)
         {

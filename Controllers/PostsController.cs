@@ -7,13 +7,9 @@ namespace ApiWebKut.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PostsController : ControllerBase
+    public class PostsController(IPostService postService) : ControllerBase
     {
-        private readonly IPostService _postService;
-        public PostsController(IPostService postService)
-        {
-            _postService = postService;
-        }
+        private readonly IPostService _postService = postService ?? throw new ArgumentNullException(nameof(postService));
 
         [HttpGet]
         public async Task<IActionResult> GetAllPosts()

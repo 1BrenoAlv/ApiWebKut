@@ -4,13 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApiWebKut.Data.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository(AppDbContext appDbContext) : IUserRepository
     {
-        private readonly AppDbContext _appDbContext;
-        public UserRepository(AppDbContext appDbContext)
-        {
-            _appDbContext = appDbContext;
-        }
+        private readonly AppDbContext _appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
 
         public async Task<Users> AddUserAsync(Users user)
         {

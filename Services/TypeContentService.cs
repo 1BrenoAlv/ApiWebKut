@@ -5,13 +5,10 @@ using ApiWebKut.Services.Interfaces;
 
 namespace ApiWebKut.Services
 {
-    public class TypeContentService : ITypeContentService
+    public class TypeContentService(ITypeContentRepository typeContentRepository) : ITypeContentService
     {
-       private readonly ITypeContentRepository _typeContentRepository;
-         public TypeContentService(ITypeContentRepository typeContentRepository)
-         {
-              _typeContentRepository = typeContentRepository;
-        }
+       private readonly ITypeContentRepository _typeContentRepository = typeContentRepository ?? throw new ArgumentNullException(nameof(typeContentRepository));
+        
         public async Task<List<TypeContentDto>> GetAllTypeContentsAsync()
         {
             var typeContents = await _typeContentRepository.GetAllTypeContentsAsync();

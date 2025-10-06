@@ -2,25 +2,14 @@
 using ApiWebKut.DTOs.Users;
 using ApiWebKut.Models;
 using ApiWebKut.Services.Interfaces;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace ApiWebKut.Services
 {
-    public class UserService : IUserService
+    public class UserService(IUserRepository userRepository, IConfiguration configuration, ITokenService tokenService) : IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _configuration;
-        private readonly ITokenService _tokenService;
-        public UserService(IUserRepository userRepository, IConfiguration configuration, ITokenService tokenService)
-        {
-            _userRepository = userRepository;
-            _configuration = configuration;
-            _tokenService = tokenService;
-        }
+        private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        private readonly IConfiguration _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        private readonly ITokenService _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
 
         public async Task<bool> ChangePasswordAsync(Guid id, ChangePasswordUserDto changePasswordUserDto)
         {
@@ -46,7 +35,7 @@ namespace ApiWebKut.Services
                 FullName = createUserDto.FullName,
                 Email = createUserDto.Email,
                 Username = createUserDto.Username,
-                Password = createUserDto.Password = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password)
+                Password = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password)
             };
 
             var newUser = await _userRepository.AddUserAsync(userEntity);

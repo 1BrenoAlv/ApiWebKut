@@ -2,13 +2,10 @@
 
 namespace ApiWebKut.Services
 {
-    public class FileService : IFileService
+    public class FileService(IWebHostEnvironment environment) : IFileService
     {
-        private readonly IWebHostEnvironment _environment;
-        public FileService(IWebHostEnvironment environment)
-        {
-            _environment = environment;
-        }
+        private readonly IWebHostEnvironment _environment = environment ?? throw new ArgumentNullException(nameof(environment));
+       
         public async Task<string> SaveImageAsync(IFormFile imageFile)
         {
             if (imageFile == null || imageFile.Length == 0)
