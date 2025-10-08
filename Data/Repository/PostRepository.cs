@@ -51,6 +51,7 @@ namespace ApiWebKut.Data.Repository
                 .Include(p => p.User)
                 .Include(p => p.TypeContent)
                 .Include(p => p.Likes)
+               // .OrderByDescending(p) fazer depois
                 .ToListAsync();
         }
         public async Task<Posts?> UpdatePostAsync(int id, Posts post)

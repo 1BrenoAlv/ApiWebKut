@@ -93,7 +93,7 @@ namespace ApiWebKut.Services
 
         public async Task<IEnumerable<PostDto>> GetAllPostsAsync()
         {
-            var userIdString = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userIdString = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier); // REVER DEFINICAO E ESTUDAR CLAIM httpContext
             Guid.TryParse(userIdString, out Guid userId);
             var posts = await _postRepository.GetAllPostsAsync();
             var postDtos = posts.Select(p => new PostDto
@@ -126,7 +126,7 @@ namespace ApiWebKut.Services
         public async Task<PostDto> GetPostByIdAsync(int id)
         {
             var userIdString = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!Guid.TryParse(userIdString, out Guid currentUserId))
+            if (!Guid.TryParse(userIdString, out Guid currentUserId))  // ATENCAO AQUI, NÃO PRECISAVA
             {
                 return null;
             }

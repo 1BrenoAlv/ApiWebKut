@@ -79,8 +79,8 @@ namespace ApiWebKut.Controllers
             }
             return NoContent();
         }
-    
-    [HttpGet("MyPosts")]
+
+        [HttpGet("MyPosts")]
         [Authorize]
         public async Task<IActionResult> GetMyPosts()
         {
